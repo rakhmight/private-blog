@@ -1,13 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar :elevation="9" color="#1a1a1a" theme="dark">
-      <v-container class="d-flex flex-row align-center justify-center">
-        <div class="d-flex flex-row align-center justify-center">
-          <div class="app-bar-img mr-2"></div>
-          <v-app-bar-title>Интелегенция Ташкента</v-app-bar-title>
-        </div>
-      </v-container>
-    </v-app-bar>
+    <header-component />
 
     <v-main style="background: var(--bg-color)">
       <router-view />
@@ -16,12 +9,16 @@
 </template>
 
 <script>
+import HeaderComponent from "@/components/HeaderComponent.vue";
+
 export default {
   name: "App",
-
   data: () => ({
     //
   }),
+  components: {
+    HeaderComponent,
+  },
 };
 </script>
 
@@ -59,6 +56,8 @@ body {
 :root {
   --main-color: #0d5fd8;
   --bg-color: #474747;
+  --block-color: #1f1f1f;
+  --second-color: #6e6e6e;
 }
 /*=============================================================*/
 
@@ -86,8 +85,8 @@ body {
 /*=============================================================*/
 
 .app-bar-img {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   background-image: url("@/assets/media/mustache.png");
   background-size: contain;
 }
