@@ -11,6 +11,8 @@
         prepend-icon="mdi-image-area"
         label="Загрузите фотографии"
         v-model="files"
+        @click:clear="post.media = []"
+        @click="post.media = []"
       ></v-file-input>
       <v-textarea
         density="compact"
@@ -29,7 +31,7 @@
         :items="items"
         variant="outlined"
         chips
-        label="Реакции"
+        label="Реакции (необязательно)"
         multiple=""
       ></v-select>
       <v-text-field
@@ -224,18 +226,37 @@ export default {
         const docUpdRef = doc(db, "codes", documentID);
         if (this.codeLegacy) {
           const legacyPosts = await this.legacyCodePosts(this.codeLegacy);
-          await updateDoc(docUpdRef, {
-            posts: [this.post, ...documentData.posts, ...legacyPosts],
-          });
+          if (legacyPosts) {
+            if (documentData.posts) {
+              await updateDoc(docUpdRef, {
+                posts: [this.post, ...documentData.posts, ...legacyPosts],
+              });
+            } else {
+              await updateDoc(docUpdRef, {
+                posts: [this.post, ...legacyPosts],
+              });
+            }
+          } else {
+            await updateDoc(docUpdRef, {
+              posts: [this.post],
+            });
+          }
         } else {
-          await updateDoc(docUpdRef, {
-            posts: [...documentData.posts, this.post],
-          });
+          if (documentData.posts) {
+            await updateDoc(docUpdRef, {
+              posts: [...documentData.posts, this.post],
+            });
+          } else {
+            await updateDoc(docUpdRef, {
+              posts: [this.post],
+            });
+          }
         }
 
         this.successAdd = true;
         console.log("Done");
         setTimeout(() => {
+          this.files = [];
           this.content = "Начните что-то писать..";
           this.code = null;
           this.blockBtn = false;
@@ -246,11 +267,19 @@ export default {
         console.log("Begin");
         if (this.codeLegacy) {
           const legacyPosts = await this.legacyCodePosts(this.codeLegacy);
-          const docRefNew = await addDoc(collection(db, "codes"), {
-            code: this.code,
-            posts: [this.post, ...legacyPosts],
-          });
-          console.log("Document written with ID: ", docRefNew.id);
+          if (legacyPosts) {
+            const docRefNew = await addDoc(collection(db, "codes"), {
+              code: this.code,
+              posts: [this.post, ...legacyPosts],
+            });
+            console.log("Document written with ID: ", docRefNew.id);
+          } else {
+            const docRefNew = await addDoc(collection(db, "codes"), {
+              code: this.code,
+              posts: [this.post],
+            });
+            console.log("Document written with ID: ", docRefNew.id);
+          }
         } else {
           const docRefNew = await addDoc(collection(db, "codes"), {
             code: this.code,
@@ -262,6 +291,7 @@ export default {
         this.successAdd = true;
         console.log("Done");
         setTimeout(() => {
+          this.files = [];
           this.content = "Начните что-то писать..";
           this.code = null;
           this.blockBtn = false;
@@ -290,7 +320,9 @@ export default {
   watch: {
     files() {
       this.post.media = [];
-      this.convert();
+      if (this.files.length) {
+        this.convert();
+      }
     },
 
     reactions() {

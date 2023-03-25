@@ -4,6 +4,7 @@ export default createStore({
   state: {
     user: null,
     code: null,
+    id: null,
   },
   getters: {
     getUser(state) {
@@ -12,6 +13,10 @@ export default createStore({
 
     getCode(state) {
       return state.code;
+    },
+
+    getID(state) {
+      return state.id;
     },
   },
   mutations: {
@@ -23,6 +28,9 @@ export default createStore({
     },
     changeCode(state, newCode) {
       state.code = newCode;
+    },
+    changeID(state, value) {
+      state.id = value;
     },
   },
   actions: {},

@@ -10,6 +10,8 @@
 
 <script>
 import HeaderComponent from "@/components/HeaderComponent.vue";
+import randomGenerator from "@/plugins/randomGenerator.js";
+import { mapMutations } from "vuex";
 
 export default {
   name: "App",
@@ -24,6 +26,20 @@ export default {
       this.routerTransition =
         toDepth > fromDepth ? "slide-left" : "slide-right";
     },
+  },
+  methods: {
+    ...mapMutations(["changeID"]),
+  },
+  mounted() {
+    let platformID = localStorage.getItem("id");
+
+    if (platformID) {
+      this.changeID(JSON.parse(platformID));
+    } else {
+      let newID = randomGenerator(32);
+      localStorage.setItem("id", JSON.stringify(newID));
+      this.changeID(newID);
+    }
   },
   components: {
     HeaderComponent,
@@ -68,6 +84,7 @@ body {
   --block-color: #1f1f1f;
   --second-color: #6e6e6e;
   --special-color: #070707;
+  --darkreader-bg--bg-color: #474747;
 }
 /*=============================================================*/
 

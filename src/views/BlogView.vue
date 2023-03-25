@@ -79,7 +79,11 @@ export default {
           if (docSnap.docs.length) {
             docSnap.forEach((doc) => {
               let claimDocs = doc.data();
-              this.posts = [...claimDocs.posts];
+              if (claimDocs.posts) {
+                if (claimDocs.posts.length) {
+                  this.posts = [...claimDocs.posts];
+                }
+              }
             });
           }
           this.loader = false;
