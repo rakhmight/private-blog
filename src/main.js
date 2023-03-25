@@ -5,6 +5,7 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
 import firebase from "firebase/compat/app";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDkr3YgPHMKxUIcI6cjZYRlET6PNF_Ky9Y",
@@ -15,7 +16,8 @@ const firebaseConfig = {
   appId: "1:1075378531610:web:81b368e7cb785cb0e610a3",
   databaseURL: "https://private-blog-12658.firebaseio.com",
 };
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 
 loadFonts();
 

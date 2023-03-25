@@ -16,6 +16,15 @@ export default {
   data: () => ({
     //
   }),
+  watch: {
+    $route(to, from) {
+      const routeDeep = ["/", "/blog", "/map", "/admin", "/auth"];
+      const toDepth = routeDeep.indexOf(to.path);
+      const fromDepth = routeDeep.indexOf(from.path);
+      this.routerTransition =
+        toDepth > fromDepth ? "slide-left" : "slide-right";
+    },
+  },
   components: {
     HeaderComponent,
   },
@@ -58,6 +67,7 @@ body {
   --bg-color: #474747;
   --block-color: #1f1f1f;
   --second-color: #6e6e6e;
+  --special-color: #070707;
 }
 /*=============================================================*/
 
@@ -89,5 +99,57 @@ body {
   height: 30px;
   background-image: url("@/assets/media/mustache.png");
   background-size: contain;
+}
+
+.slide-left-enter-active {
+  animation-name: slide-left-in;
+  animation-duration: 0.2s;
+}
+.slide-left-leave-active {
+  animation-name: slide-left-out;
+  animation-duration: 0.2s;
+}
+.slide-right-enter-active {
+  animation-name: slide-right-in;
+  animation-duration: 0.2s;
+}
+.slide-right-leave-active {
+  animation-name: slide-right-out;
+  animation-duration: 0.2s;
+}
+
+@keyframes slide-left-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-left-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-right-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes slide-right-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 </style>

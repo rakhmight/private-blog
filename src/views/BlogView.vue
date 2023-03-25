@@ -1,65 +1,236 @@
 <template>
   <v-container>
     <div class="content">
-      <div class="post">
-        <div class="post__header d-flex flex-row">
-          <v-icon color="var(--second-color)">mdi-calendar-range</v-icon>
-          <p style="color: var(--second-color)" class="ml-1">12.23.2023</p>
-        </div>
-        <v-divider class="mt-2 mb-3"></v-divider>
-        <div class="post__media">
-          <v-carousel theme="dark" show-arrows hide-delimiter-background>
-            <template v-slot:prev="{ props }">
-              <v-btn
-                variant="text"
-                color="var(--second-color)"
-                @click="props.onClick"
-                ><span style="font-size: 2em">←</span></v-btn
-              >
-            </template>
-            <template v-slot:next="{ props }">
-              <v-btn
-                variant="text"
-                color="var(--second-color)"
-                @click="props.onClick"
-                ><span style="font-size: 2em">→</span></v-btn
-              >
-            </template>
-            <v-carousel-item
-              src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-              contain
-            ></v-carousel-item>
+      <div class="posts__wrapper" v-if="posts.length">
+        <post-component
+          v-for="(post, i) in posts"
+          :key="i"
+          :post="post"
+          :postID="i"
+          :doReaction="makeReaction"
+        />
+      </div>
 
-            <v-carousel-item
-              src="https://cdn.vuetifyjs.com/images/cards/hotel.jpg"
-              contain
-            ></v-carousel-item>
-
-            <v-carousel-item
-              src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-              contain
-            ></v-carousel-item>
-          </v-carousel>
+      <div class="not-content" v-if="!posts.length">
+        <div
+          class="d-flex flex-column align-center justify-center w-100 h-100"
+          v-if="!posts.length && !loader"
+        >
+          <div>
+            <v-img
+              src="@/assets/media/rabbit-in-the-hat.png"
+              width="65px"
+              height="65px"
+            ></v-img>
+          </div>
+          <h3 class="mt-2">Публикаций нет</h3>
+          <a @click="$router.push('/')" style="cursor: pointer" class="mt-3"
+            >Ввести другой код</a
+          >
         </div>
-        <v-divider class="mt-3 mb-2"></v-divider>
-        <div class="post__content"></div>
-        <div class="post__footer"></div>
+
+        <div
+          class="d-flex flex-column align-center justify-center w-100 h-100"
+          v-if="loader"
+        >
+          <v-progress-circular
+            :size="50"
+            color="#fff"
+            indeterminate
+            class="mt-10"
+            style="margin: 0 auto"
+          ></v-progress-circular>
+        </div>
       </div>
     </div>
   </v-container>
 </template>
 
+<script>
+import PostComponent from "@/components/PostComponent.vue";
+import { mapGetters } from "vuex";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+import { db } from "@/main.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+
+export default {
+  data() {
+    return {
+      posts: [],
+      loader: true,
+    };
+  },
+  methods: {
+    async loadPosts() {
+      if (this.getCode) {
+        const docRef = query(
+          collection(db, "codes"),
+          where("code", "==", this.getCode)
+        );
+        try {
+          const docSnap = await getDocs(docRef);
+          if (docSnap.docs.length) {
+            docSnap.forEach((doc) => {
+              let claimDocs = doc.data();
+              this.posts = [...claimDocs.posts];
+            });
+          }
+          this.loader = false;
+        } catch (error) {
+          console.error("Ошибка сервера: ", error);
+          this.$router.push("/");
+        }
+      }
+    },
+
+    makeReaction(postID, reactionID) {
+      let reactionsStore = localStorage.getItem("reactions");
+
+      if (reactionsStore) {
+        let store = JSON.parse(reactionsStore);
+        let successSearch = false;
+        let hasBeen = false;
+
+        store = store.map((el) => {
+          // ищем код
+          if (el.code == this.getCode) {
+            successSearch = true;
+
+            el.reactions.map((obj) => {
+              if (obj.post == postID) {
+                // ошибка, реакция уже есть
+                hasBeen = true;
+              }
+            });
+
+            // кидаем новую реакцию
+            if (!hasBeen) {
+              el.reactions.push({
+                post: postID,
+                reaction: reactionID,
+              });
+
+              this.posts[postID].reactions[reactionID].counter += 1;
+              this.saveReaction(postID, reactionID);
+            }
+          }
+          return el;
+        });
+
+        // если кода нет, то добавляем
+        if (!successSearch) {
+          store.push({
+            code: this.getCode,
+            reactions: [
+              {
+                post: postID,
+                reaction: reactionID,
+              },
+            ],
+          });
+
+          localStorage.setItem("reactions", JSON.stringify(store));
+          if (!hasBeen) {
+            this.posts[postID].reactions[reactionID].counter += 1;
+            this.saveReaction(postID, reactionID);
+          }
+        }
+        localStorage.setItem("reactions", JSON.stringify(store));
+      } else {
+        let store = [
+          {
+            code: this.getCode,
+            reactions: [
+              {
+                post: postID,
+                reaction: reactionID,
+              },
+            ],
+          },
+        ];
+
+        localStorage.setItem("reactions", JSON.stringify(store));
+        this.saveReaction(postID, reactionID);
+        this.posts[postID].reactions[reactionID].counter += 1;
+      }
+    },
+
+    async saveReaction(postID, reactionID) {
+      const auth = getAuth();
+      await signInWithEmailAndPassword(auth, "system_call@bot.dev", "25566dev")
+        .then(async () => {
+          let currentDoc;
+          let documentID;
+
+          const docRef = query(
+            collection(db, "codes"),
+            where("code", "==", this.getCode)
+          );
+          const docSnap = await getDocs(docRef);
+          if (docSnap.docs.length) {
+            docSnap.forEach((doc) => {
+              currentDoc = doc.data();
+              documentID = doc.id;
+            });
+          }
+          let currentDocPosts = currentDoc.posts;
+          currentDocPosts[postID].reactions[reactionID].counter += 1;
+
+          const docUpdRef = doc(db, "codes", documentID);
+          await updateDoc(docUpdRef, {
+            posts: [...currentDocPosts],
+          });
+        })
+        .then(() => {
+          signOut(auth).catch((error) => {
+            console.error("Some error with DB: ", error);
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.error(errorCode, errorMessage);
+        });
+    },
+  },
+  computed: mapGetters(["getCode"]),
+  mounted() {
+    if (!this.getCode) {
+      this.$router.push("/");
+    } else {
+      this.loadPosts();
+    }
+  },
+  components: {
+    PostComponent,
+  },
+};
+
+// Реализовать отображение выбранной реакции пользователя
+// Реализовать анимацию реакции
+</script>
+
 <style scoped>
 .content {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
+  width: 100%;
   margin-top: 20px;
 }
-
-.post {
-  padding: 15px;
-  border-radius: 5px;
-  background-color: var(--block-color);
+.posts__wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+.not-content {
+  height: 70vh;
+  width: 100%;
 }
 </style>

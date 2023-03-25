@@ -7,6 +7,7 @@
       </div>
       <div class="form__content d-flex flex-column">
         <v-text-field
+          density="compact"
           width="100%"
           label="Секретный ключ"
           variant="outlined"
@@ -15,6 +16,8 @@
           @click:append="show = !show"
           loading
           class="mb-2"
+          v-model="code"
+          :error="codeError"
         >
           <template v-slot:loader>
             <v-progress-linear
@@ -26,22 +29,68 @@
           </template>
         </v-text-field>
 
-        <v-btn width="150" theme="dark" style="margin: 0 auto"> Войти </v-btn>
+        <v-btn
+          width="150"
+          theme="dark"
+          style="margin: 0 auto"
+          @click="claimCode()"
+        >
+          Войти
+        </v-btn>
       </div>
     </div>
+
+    <v-alert
+      density="compact"
+      color="red"
+      dense
+      dismissible
+      elevation="3"
+      type="error"
+      class="subtitle-2 error-box"
+      v-for="(error, i) in errors"
+      :key="i"
+      max-height="45"
+      width="550"
+      >{{ error }}</v-alert
+    >
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import { mapMutations } from "vuex";
 
 export default defineComponent({
   name: "EnterView",
   data() {
     return {
+      code: null,
       show: false,
       wait: false,
+      errors: [],
+      codeError: false,
     };
+  },
+  methods: {
+    ...mapMutations(["changeCode"]),
+
+    claimCode() {
+      this.errors = [];
+      if (!this.code) {
+        this.codeError = true;
+        return this.errors.push("Вы должны ввести секретный код");
+      }
+
+      this.changeCode(this.code);
+      this.$router.push("/blog");
+    },
+  },
+  watch: {
+    code() {
+      this.errors = [];
+      this.codeError = false;
+    },
   },
 });
 </script>
