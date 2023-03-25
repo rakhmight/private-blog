@@ -51,6 +51,10 @@
       >
         <div class="reaction__emoji" @click="makeReaction(i)">
           {{ reaction.emoji }}
+          <div
+            class="reaction-animate"
+            :id="'reaction-' + postID + '-' + i"
+          ></div>
         </div>
         <p>{{ reaction.counter }}</p>
       </div>
@@ -100,6 +104,12 @@ export default {
   width: 30px;
   transition: font-size 0.1s ease-in-out;
   cursor: pointer;
+  position: relative;
+}
+.reaction-animate {
+  position: absolute;
+  top: -57px;
+  left: -120px;
 }
 .reaction__emoji:hover {
   font-size: 1.45em;

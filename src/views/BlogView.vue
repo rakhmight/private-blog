@@ -118,6 +118,7 @@ export default {
               });
 
               this.posts[postID].reactions[reactionID].counter += 1;
+              this.shootReaction(postID, reactionID);
               this.saveReaction(postID, reactionID);
             }
           }
@@ -139,6 +140,7 @@ export default {
           localStorage.setItem("reactions", JSON.stringify(store));
           if (!hasBeen) {
             this.posts[postID].reactions[reactionID].counter += 1;
+            this.shootReaction(postID, reactionID);
             this.saveReaction(postID, reactionID);
           }
         }
@@ -159,7 +161,52 @@ export default {
         localStorage.setItem("reactions", JSON.stringify(store));
         this.saveReaction(postID, reactionID);
         this.posts[postID].reactions[reactionID].counter += 1;
+        this.shootReaction(postID, reactionID);
       }
+    },
+
+    shootReaction(postID, emojiID) {
+      const confetti = require("canvas-confetti");
+
+      var myCanvas = document.createElement("canvas");
+      let target = document.getElementById(`reaction-${postID}-${emojiID}`);
+      target.appendChild(myCanvas);
+
+      var myConfetti = confetti.create(myCanvas, {
+        resize: true,
+        useWorker: true,
+      });
+
+      var defaults = {
+        spread: 360,
+        ticks: 50,
+        gravity: 0,
+        decay: 0.94,
+        startVelocity: 1,
+        shapes: ["star"],
+        colors: ["FFE400", "FFBD00", "E89400", "FFCA6C", "FDFFB8"],
+      };
+
+      function shoot() {
+        myConfetti({
+          ...defaults,
+          particleCount: 5,
+          scalar: 1.2,
+          shapes: ["star"],
+        });
+
+        myConfetti({
+          ...defaults,
+          particleCount: 2,
+          scalar: 0.75,
+          shapes: ["circle"],
+        });
+      }
+
+      shoot();
+      setTimeout(() => {
+        myCanvas.remove();
+      }, 2000);
     },
 
     async saveReaction(postID, reactionID) {
