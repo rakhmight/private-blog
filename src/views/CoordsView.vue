@@ -9,6 +9,19 @@
           v-if="loading"
         ></v-progress-circular>
       </div>
+      <div
+        class="d-flex flex-column align-center justify-center w-100 h-100"
+        v-if="!coords.length && !loading"
+      >
+        <div>
+          <v-img
+            src="@/assets/media/spiderweb.png"
+            width="65px"
+            height="65px"
+          ></v-img>
+        </div>
+        <h3 class="mt-2">Пусто</h3>
+      </div>
 
       <v-expansion-panels theme="dark">
         <v-expansion-panel v-for="(coord, i) in coords" :key="i">
