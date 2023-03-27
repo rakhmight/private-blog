@@ -254,7 +254,6 @@ export default {
         }
 
         this.successAdd = true;
-        console.log("Done");
         setTimeout(() => {
           this.files = [];
           this.content = "Начните что-то писать..";
@@ -264,32 +263,27 @@ export default {
           this.codeLegacy = null;
         }, 3000);
       } else {
-        console.log("Begin");
         if (this.codeLegacy) {
           const legacyPosts = await this.legacyCodePosts(this.codeLegacy);
           if (legacyPosts) {
-            const docRefNew = await addDoc(collection(db, "codes"), {
+            await addDoc(collection(db, "codes"), {
               code: this.code,
               posts: [this.post, ...legacyPosts],
             });
-            console.log("Document written with ID: ", docRefNew.id);
           } else {
-            const docRefNew = await addDoc(collection(db, "codes"), {
+            await addDoc(collection(db, "codes"), {
               code: this.code,
               posts: [this.post],
             });
-            console.log("Document written with ID: ", docRefNew.id);
           }
         } else {
-          const docRefNew = await addDoc(collection(db, "codes"), {
+          await addDoc(collection(db, "codes"), {
             code: this.code,
             posts: [this.post],
           });
-          console.log("Document written with ID: ", docRefNew.id);
         }
 
         this.successAdd = true;
-        console.log("Done");
         setTimeout(() => {
           this.files = [];
           this.content = "Начните что-то писать..";

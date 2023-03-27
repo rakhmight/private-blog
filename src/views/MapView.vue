@@ -1,6 +1,5 @@
 <template>
   <div class="content" style="position: releative">
-    <div id="map" style="width: 100%; height: 90vh"></div>
     <v-alert
       color="info"
       density="compact"
@@ -11,6 +10,25 @@
       v-if="allow && !loading && !marks.length"
       >У данного кода нет меток</v-alert
     >
+    <div id="map" style="width: 100%; height: 90vh"></div>
+    <div
+      v-if="loading"
+      class="w-100 d-flex flex-column justify-center align-center"
+      style="
+        height: 90vh;
+        position: absolute;
+        top: 64px;
+        z-index: 9998;
+        background-color: #000000d9;
+      "
+    >
+      <v-progress-circular
+        :size="50"
+        color="#fff"
+        indeterminate
+        v-if="loading"
+      ></v-progress-circular>
+    </div>
     <div
       v-if="!allow"
       class="w-100 d-flex flex-column justify-center align-center"
@@ -128,6 +146,7 @@ export default {
     },
   },
   mounted() {
+    let geoPosition;
     const ctx = this;
 
     let codeFromStore = localStorage.getItem("code");
@@ -147,6 +166,7 @@ export default {
           localStorage.setItem("coordsAllow", true);
           window.location.reload();
         }
+        geoPosition = position;
         ctx.allow = true;
 
         // сохранение в БД
@@ -169,9 +189,10 @@ export default {
             let now = today.toLocaleString();
             let hintCoord = {
               main: {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
+                latitude: geoPosition.coords.latitude,
+                longitude: geoPosition.coords.longitude,
                 time: now,
+                code: ctx.getCode,
               },
               additionally: {
                 userAgent: JSON.parse(JSON.stringify(navigator.userAgent)),
@@ -230,6 +251,11 @@ export default {
         console.log(error);
         ctx.allow = false;
         localStorage.removeItem("coordsAllow");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
       }
     );
 
@@ -247,7 +273,7 @@ export default {
         .then(()=>{
           objectManager.add(JSON.stringify(ctx.marksReq));
           myMap.geoObjects.add(objectManager);
-          //localStorage.removeItem("coordsAllow");
+          localStorage.removeItem("coordsAllow");
         })
       }
     }

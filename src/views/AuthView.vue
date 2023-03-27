@@ -175,5 +175,8 @@ export default {
     margin-bottom: 15px;
     margin-top: 10px;
   }
+  .error-box {
+    width: 100%;
+  }
 }
 </style>

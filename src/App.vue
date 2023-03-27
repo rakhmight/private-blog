@@ -15,9 +15,7 @@ import { mapMutations } from "vuex";
 
 export default {
   name: "App",
-  data: () => ({
-    //
-  }),
+  data: () => ({}),
   watch: {
     $route(to, from) {
       const routeDeep = ["/", "/blog", "/map", "/admin", "/auth"];

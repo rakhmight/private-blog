@@ -4,6 +4,7 @@ import BlogView from "@/views/BlogView";
 import MapView from "@/views/MapView";
 import AuthView from "@/views/AuthView";
 import AdminView from "@/views/AdminView";
+import CoordsView from "@/views/CoordsView";
 
 const routes = [
   {
@@ -34,7 +35,13 @@ const routes = [
     path: "/admin",
     name: "admin",
     component: AdminView,
-    meta: { userArea: "" },
+    meta: { userArea: "coords" },
+  },
+  {
+    path: "/coords",
+    name: "coords",
+    component: CoordsView,
+    meta: { userArea: "admin" },
   },
   {
     path: "/:catchAll(.*)",

@@ -50,8 +50,6 @@
       class="subtitle-2 error-box"
       v-for="(error, i) in errors"
       :key="i"
-      max-height="45"
-      width="550"
       >{{ error }}</v-alert
     >
   </div>
@@ -124,6 +122,12 @@ export default defineComponent({
 .form__content {
   width: 100%;
 }
+.error-box {
+  padding: 10px;
+  width: 550px;
+  height: auto;
+  max-height: 50px;
+}
 
 @media only screen and (max-width: 770px) {
   .form {
@@ -136,6 +140,9 @@ export default defineComponent({
   .header__img {
     width: 22px;
     height: 22px;
+  }
+  .error-box {
+    width: 100%;
   }
 }
 </style>

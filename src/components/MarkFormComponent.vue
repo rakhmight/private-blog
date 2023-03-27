@@ -77,7 +77,7 @@
       type="success"
       class="subtitle-2"
       v-if="successAdd"
-      >Марка успешно добавлена</v-alert
+      >Метка успешно добавлена</v-alert
     >
   </div>
 </template>
@@ -198,7 +198,6 @@ export default {
         }
 
         this.successAdd = true;
-        console.log("Done");
         setTimeout(() => {
           this.file = null;
           this.media = null;
@@ -209,32 +208,27 @@ export default {
           this.codeLegacy = null;
         }, 3000);
       } else {
-        console.log("Begin");
         if (this.codeLegacy) {
           const legacyMarks = await this.legacyCodeMarks(this.codeLegacy);
           if (legacyMarks) {
-            const docRefNew = await addDoc(collection(db, "codes"), {
+            await addDoc(collection(db, "codes"), {
               code: this.code,
               marks: [markToSave, ...legacyMarks],
             });
-            console.log("Document written with ID: ", docRefNew.id);
           } else {
-            const docRefNew = await addDoc(collection(db, "codes"), {
+            await addDoc(collection(db, "codes"), {
               code: this.code,
               marks: [markToSave],
             });
-            console.log("Document written with ID: ", docRefNew.id);
           }
         } else {
-          const docRefNew = await addDoc(collection(db, "codes"), {
+          await addDoc(collection(db, "codes"), {
             code: this.code,
             marks: [markToSave],
           });
-          console.log("Document written with ID: ", docRefNew.id);
         }
 
         this.successAdd = true;
-        console.log("Done");
         setTimeout(() => {
           this.file = null;
           this.media = null;
@@ -245,8 +239,6 @@ export default {
           this.codeLegacy = null;
         }, 3000);
       }
-
-      console.log(markToSave);
     },
 
     async legacyCodeMarks(code) {

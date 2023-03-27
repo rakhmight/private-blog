@@ -40,6 +40,28 @@
         >
       </template>
     </v-tooltip>
+    <v-tooltip
+      theme="dark"
+      text="Посмотреть координаты пользователей"
+      v-if="$route.meta.userArea == 'coords'"
+    >
+      <template v-slot:activator="{ props }">
+        <v-icon class="tomap" v-bind="props" @click="$router.push('/coords')"
+          >mdi-database-marker</v-icon
+        >
+      </template>
+    </v-tooltip>
+    <v-tooltip
+      theme="dark"
+      text="Перейти в админ панель"
+      v-if="$route.meta.userArea == 'admin'"
+    >
+      <template v-slot:activator="{ props }">
+        <v-icon class="tomap" v-bind="props" @click="$router.push('/admin')"
+          >mdi-chess-king</v-icon
+        >
+      </template>
+    </v-tooltip>
   </v-app-bar>
 </template>
 
