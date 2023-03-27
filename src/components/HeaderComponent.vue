@@ -3,7 +3,9 @@
     <v-container class="d-flex flex-row align-center justify-center">
       <div class="d-flex flex-row align-center justify-center">
         <div class="app-bar-img mr-2"></div>
-        <v-app-bar-title>Интелегенция Ташкента</v-app-bar-title>
+        <v-app-bar-title class="header-title"
+          >Интелегенция Ташкента</v-app-bar-title
+        >
       </div>
     </v-container>
 
@@ -67,3 +69,22 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.app-bar-img {
+  width: 30px;
+  height: 30px;
+  background-image: url("@/assets/media/mustache.png");
+  background-size: contain;
+}
+
+@media only screen and (max-width: 770px) {
+  .header-title {
+    font-size: 1rem;
+  }
+  .app-bar-img {
+    width: 25px;
+    height: 25px;
+  }
+}
+</style>

@@ -111,13 +111,6 @@ body {
 }
 /*=============================================================*/
 
-.app-bar-img {
-  width: 30px;
-  height: 30px;
-  background-image: url("@/assets/media/mustache.png");
-  background-size: contain;
-}
-
 .slide-left-enter-active {
   animation-name: slide-left-in;
   animation-duration: 0.2s;
@@ -167,6 +160,15 @@ body {
   }
   100% {
     opacity: 0;
+  }
+}
+
+@media only screen and (max-width: 770px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  .v-container {
+    padding: 0;
   }
 }
 </style>

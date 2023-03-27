@@ -114,4 +114,17 @@ export default {
 .reaction__emoji:hover {
   font-size: 1.45em;
 }
+
+@media only screen and (max-width: 770px) {
+  .post {
+    width: 100%;
+    min-width: 100%;
+  }
+  .post__wrapper {
+    width: 100%;
+  }
+  .post__footer {
+    width: 100%;
+  }
+}
 </style>

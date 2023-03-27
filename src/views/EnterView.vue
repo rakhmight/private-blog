@@ -124,4 +124,18 @@ export default defineComponent({
 .form__content {
   width: 100%;
 }
+
+@media only screen and (max-width: 770px) {
+  .form {
+    width: 100vw;
+    padding: 10px;
+  }
+  .header__title > h3 {
+    font-size: 0.9rem;
+  }
+  .header__img {
+    width: 22px;
+    height: 22px;
+  }
+}
 </style>

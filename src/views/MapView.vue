@@ -29,7 +29,7 @@
           height="65px"
         ></v-img>
       </div>
-      <h3 class="mt-3">
+      <h3 class="mt-3" style="text-align: center">
         Чтобы увидеть места, вам необходимо дать доступ к геопозиции
       </h3>
       <p style="text-align: center">
@@ -247,6 +247,7 @@ export default {
         .then(()=>{
           objectManager.add(JSON.stringify(ctx.marksReq));
           myMap.geoObjects.add(objectManager);
+          //localStorage.removeItem("coordsAllow");
         })
       }
     }

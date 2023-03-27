@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-7">
+  <div style="width: 100%" class="mb-7 d-flex flex-column align-center">
     <div class="mark-section">
       <div id="map2" style="width: 100%; height: 35vh"></div>
 
@@ -321,5 +321,12 @@ export default {
   padding: 0 15px 15px;
   background-color: var(--block-color);
   border-radius: 0 0 5px 5px;
+}
+
+@media only screen and (max-width: 770px) {
+  .mark-section {
+    width: 100%;
+    padding: 0 10px 10px;
+  }
 }
 </style>

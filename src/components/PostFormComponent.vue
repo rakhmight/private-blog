@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%" class="d-flex flex-column align-center">
     <div class="post-section">
       <v-file-input
         theme="dark"
@@ -358,5 +358,12 @@ export default {
   padding: 0 15px 15px;
   background-color: var(--block-color);
   border-radius: 0 0 5px 5px;
+}
+
+@media only screen and (max-width: 770px) {
+  .post-section {
+    width: 100%;
+    padding: 0 10px 10px;
+  }
 }
 </style>

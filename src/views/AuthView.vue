@@ -1,8 +1,8 @@
 <template>
   <div class="content">
     <div class="form">
-      <div class="form__header d-flex flex-row">
-        <div class="header__img mr-2 mb-8"></div>
+      <div class="form__header d-flex flex-row align-center">
+        <div class="header__img mr-2"></div>
         <div class="header__title"><h3>Введите логин/пароль</h3></div>
       </div>
       <div class="form__content d-flex flex-column">
@@ -140,6 +140,9 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.form__header {
+  margin-bottom: 15px;
+}
 .header__img {
   width: 30px;
   height: 30px;
@@ -154,5 +157,23 @@ export default {
   width: 550px;
   height: auto;
   max-height: 50px;
+}
+
+@media only screen and (max-width: 770px) {
+  .form {
+    padding: 10px;
+    width: 100%;
+  }
+  .header__title > h3 {
+    font-size: 0.9rem;
+  }
+  .header__img {
+    width: 22px;
+    height: 22px;
+  }
+  .form__header {
+    margin-bottom: 15px;
+    margin-top: 10px;
+  }
 }
 </style>

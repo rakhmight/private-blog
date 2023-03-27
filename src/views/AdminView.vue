@@ -161,4 +161,11 @@ export default {
   background-color: var(--block-color);
   border-radius: 5px 5px 0 0;
 }
+
+@media only screen and (max-width: 770px) {
+  .section {
+    width: 100%;
+    padding: 10px 10px 0;
+  }
+}
 </style>
