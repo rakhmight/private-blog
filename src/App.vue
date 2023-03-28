@@ -1,11 +1,39 @@
 <template>
-  <v-app>
-    <header-component />
+  <div>
+    <v-app v-if="allowBrowser && blockOtherBrowserOrNotChrome">
+      <header-component />
 
-    <v-main style="background: var(--bg-color)">
-      <router-view />
-    </v-main>
-  </v-app>
+      <v-main style="background: var(--bg-color)">
+        <router-view />
+      </v-main>
+    </v-app>
+
+    <div
+      v-if="!allowBrowser && blockOtherBrowserOrNotChrome"
+      class="d-flex flex-column align-center justify-center"
+      style="
+        width: 100%;
+        height: 100vh;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+      "
+    >
+      <div>
+        <v-img
+          src="@/assets/media/chrome.png"
+          width="65px"
+          height="65px"
+          class="mb-3"
+        ></v-img>
+      </div>
+      <h4>Сайт поддерживает браузер Google Chrome</h4>
+      <p class="mt-3">
+        Просим прощения за неудобства. Некоторые браузеры не в полной мере
+        поддерживают функционал сайта.<br /><b>Это временное ограничение.</b>
+      </p>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -15,7 +43,12 @@ import { mapMutations } from "vuex";
 
 export default {
   name: "App",
-  data: () => ({}),
+  data() {
+    return {
+      allowBrowser: false,
+      blockOtherBrowserOrNotChrome: true,
+    };
+  },
   watch: {
     $route(to, from) {
       const routeDeep = ["/", "/blog", "/map", "/admin", "/auth"];
@@ -37,6 +70,23 @@ export default {
       let newID = randomGenerator(32);
       localStorage.setItem("id", JSON.stringify(newID));
       this.changeID(newID);
+    }
+
+    if (navigator) {
+      if (navigator.userAgentData) {
+        if (
+          navigator.userAgentData.brands[0].brand == "Google Chrome" ||
+          navigator.userAgentData.brands[1].brand == "Google Chrome" ||
+          navigator.userAgentData.brands[2].brand == "Google Chrome"
+        ) {
+          this.allowBrowser = true;
+        }
+      }
+    }
+
+    let params = localStorage.getItem("coordsAllow");
+    if (params) {
+      localStorage.removeItem("coordsAllow");
     }
   },
   components: {
