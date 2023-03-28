@@ -83,11 +83,6 @@ export default {
         }
       }
     }
-
-    let params = localStorage.getItem("coordsAllow");
-    if (params) {
-      localStorage.removeItem("coordsAllow");
-    }
   },
   components: {
     HeaderComponent,
